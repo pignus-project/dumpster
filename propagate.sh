@@ -8,7 +8,7 @@
 set -e
 set -x
 
-[ "$TARGET" ] || TARGET=pica-23
+[ "$TARGET" ] || TARGET=f23
 BUILD=""
 for P in "$@"
 do
