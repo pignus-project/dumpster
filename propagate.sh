@@ -8,7 +8,7 @@
 set -e
 set -x
 
-[ "$TARGET" ] || TARGET=f23
+[ "$TARGET" ] || TARGET=f24
 BUILD=""
 for P in "$@"
 do
@@ -22,7 +22,7 @@ do
 	fi
 
 	# Maybe it's a <N>
-	NVR=$(koji -c fedora-koji.conf --quiet latest-pkg f23-updates $P |awk '{print $1}')
+	NVR=$(koji -c fedora-koji.conf --quiet latest-pkg $TARGET-updates $P |awk '{print $1}')
 	[ "$NVR" ] || NVR="$P"
 
 	# Or it's a <NVR>
