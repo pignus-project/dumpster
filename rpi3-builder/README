@@ -1,0 +1,15 @@
+How to set up the rpi3 builders
+===============================
+
+1.) Build the image (on an ARM host)
+
+appliance-creator -n Fedora -c builder.ks --version=24 --release=$(date +%F) --no-compress
+
+2.) Transfer the image to the NBD server
+
+3.) Create the template: See tpl.sh
+
+4.) (Optional: boot the template and do some manual changes such as restorecon -Rv /)
+
+5.) Create the machine images: See tpl2img.sh
+
