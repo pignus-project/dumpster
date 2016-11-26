@@ -47,8 +47,8 @@ do
 	then
 		# Already built. Do a rebuild.
 		T=""
-		#pignus-koji build ${TARGET}_1 "$URL"
-		pignus-koji build ${TARGET} "$URL"
+		#pignus-koji build $BUILDF ${TARGET}_1 "$URL"
+		pignus-koji build $BUILDF ${TARGET} "$URL"
 	else
 		# Ensure the package is known
 		pignus-koji add-pkg --owner $USER $TARGET $N || :
@@ -68,7 +68,7 @@ else
 		A=$(pignus-koji resubmit $T |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	else
 		# A new build
-		A=$(pignus-koji build $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
+		A=$(pignus-koji build $BUILDF $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	fi
 	# Build status
 	[ "$A" ] && pignus-koji watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|No matching package' 
