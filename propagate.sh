@@ -8,7 +8,7 @@
 set -e
 set -x
 
-[ "$TARGET" ] || TARGET=f24
+[ "$TARGET" ] || TARGET=f25
 [ "$TAG" ] || TAG=$TARGET-updates
 BUILD=""
 for P in "$@"
@@ -47,7 +47,8 @@ do
 	then
 		# Already built. Do a rebuild.
 		T=""
-		koji -c pignus-koji.conf build ${TARGET}_1 "$URL"
+		#koji -c pignus-koji.conf build ${TARGET}_1 "$URL"
+		koji -c pignus-koji.conf build ${TARGET} "$URL"
 	else
 		# Ensure the package is known
 		koji -c pignus-koji.conf add-pkg --owner $USER $TARGET $N || :
@@ -70,5 +71,5 @@ else
 		A=$(koji -c pignus-koji.conf build $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	fi
 	# Build status
-	[ "$A" ] && koji -c pignus-koji.conf watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:' 
+	[ "$A" ] && koji -c pignus-koji.conf watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|No matching package' 
 fi
