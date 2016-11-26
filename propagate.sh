@@ -23,11 +23,11 @@ do
 	fi
 
 	# Maybe it's a <N>
-	NVR=$(koji -c fedora-koji.conf --quiet latest-pkg $TAG $P |awk '{print $1}')
+	NVR=$(koji --quiet latest-pkg $TAG $P |awk '{print $1}')
 	[ "$NVR" ] || NVR="$P"
 
 	# Or it's a <NVR>
-	URL=$(koji -c fedora-koji.conf buildinfo $NVR |sed -n 's,^Task:.*\, /\([^ :]*\):\([^ )]*\)),git://pkgs.fedoraproject.org/\1?#\2,p')
+	URL=$(koji buildinfo $NVR |sed -n 's,^Task:.*\, /\([^ :]*\):\([^ )]*\)),git://pkgs.fedoraproject.org/\1?#\2,p')
 	[ "$URL" ] || URL="$P"
 
 	if [ -f "$URL" ]
@@ -40,18 +40,18 @@ do
 	fi
 	[ "$N" ]
 
-	#NVR=$(koji -c pignus-koji.conf --quiet latest-pkg $TARGET $P |awk '{print $1}')
+	#NVR=$(pignus-koji --quiet latest-pkg $TARGET $P |awk '{print $1}')
 
-	T=$(koji -c pignus-koji.conf buildinfo $NVR |awk '/^State: COMPLETE/ {print $NF; exit} /^Task:/ {t=$2} END {print t}')
+	T=$(pignus-koji buildinfo $NVR |awk '/^State: COMPLETE/ {print $NF; exit} /^Task:/ {t=$2} END {print t}')
 	if [ "$T" = COMPLETE ]
 	then
 		# Already built. Do a rebuild.
 		T=""
-		#koji -c pignus-koji.conf build ${TARGET}_1 "$URL"
-		koji -c pignus-koji.conf build ${TARGET} "$URL"
+		#pignus-koji build ${TARGET}_1 "$URL"
+		pignus-koji build ${TARGET} "$URL"
 	else
 		# Ensure the package is known
-		koji -c pignus-koji.conf add-pkg --owner $USER $TARGET $N || :
+		pignus-koji add-pkg --owner $USER $TARGET $N || :
 		BUILD="$BUILD $URL"
 	fi
 done
@@ -60,16 +60,16 @@ done
 if echo $BUILD |grep -q ' '
 then
 	# Multiple packages to build
-	koji -c pignus-koji.conf chain-build $TARGET $BUILD
+	pignus-koji chain-build $TARGET $BUILD
 else
 	if [ "$T" ]
 	then
 		# A build was already attempted
-		A=$(koji -c pignus-koji.conf resubmit $T |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
+		A=$(pignus-koji resubmit $T |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	else
 		# A new build
-		A=$(koji -c pignus-koji.conf build $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
+		A=$(pignus-koji build $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	fi
 	# Build status
-	[ "$A" ] && koji -c pignus-koji.conf watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|No matching package' 
+	[ "$A" ] && pignus-koji watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|No matching package' 
 fi
