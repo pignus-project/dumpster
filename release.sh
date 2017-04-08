@@ -1,5 +1,5 @@
 
-RELEASE=25
+RELEASE=26
 PATCHLEVEL=$1
 
 [ -t 0 ] && T="-t"

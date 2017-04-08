@@ -13,9 +13,9 @@ for P in "$@"
 do
 	[ "$P" ]
 
-	pignus-koji --quiet latest-pkg f25 $P |grep fc25 && continue || :
+	pignus-koji --quiet latest-pkg f26 $P |grep fc26 && continue || :
 
-	NVR=$(koji --quiet latest-pkg f25-updates $P |awk '{print $1}')
+	NVR=$(koji --quiet latest-pkg f26-updates $P |awk '{print $1}')
 	[ "$NVR" ] || NVR="$P"
 
 	rm -rf tmp
@@ -30,4 +30,4 @@ do
 	rm -rf tmp
 done
 
-[ "$BUILDS" ] && pignus-koji tag-pkg --force f25-stolen $BUILDS
+[ "$BUILDS" ] && pignus-koji tag-pkg --force f26-stolen $BUILDS

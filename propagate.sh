@@ -8,7 +8,7 @@
 set -e
 set -x
 
-[ "$TARGET" ] || TARGET=f25
+[ "$TARGET" ] || TARGET=f26
 [ "$TAG" ] || TAG=$TARGET-updates
 BUILD=""
 for P in "$@"
