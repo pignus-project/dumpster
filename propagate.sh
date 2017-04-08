@@ -71,5 +71,5 @@ else
 		A=$(pignus-koji build $BUILDF $TARGET $BUILD |tee /dev/stderr |awk '/buildArch/ {print $1}' |tail -n1)
 	fi
 	# Build status
-	[ "$A" ] && pignus-koji watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|No matching package' 
+	[ "$A" ] && pignus-koji watch-logs --log=root.log $A |egrep 'No Package found|Package:|Requires:|Error:|Warning:|No matching package|nothing provides|Cannot download' 
 fi

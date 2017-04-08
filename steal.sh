@@ -13,7 +13,9 @@ for P in "$@"
 do
 	[ "$P" ]
 
-	NVR=$(koji --quiet latest-pkg f24-updates $P |awk '{print $1}')
+	pignus-koji --quiet latest-pkg f25 $P |grep fc25 && continue || :
+
+	NVR=$(koji --quiet latest-pkg f25-updates $P |awk '{print $1}')
 	[ "$NVR" ] || NVR="$P"
 
 	rm -rf tmp
@@ -21,11 +23,11 @@ do
 	cd tmp
 	koji download-build $NVR
 	cd ..
-	find tmp -type f |egrep -v 'src.rpm|noarch.rpm' |grep . && exit 1 | :
-	koji -c pignus-koji.conf import tmp/*.rpm
+	find tmp -type f |egrep -v 'src.rpm|noarch.rpm' |grep . && continue || :
+	pignus-koji import tmp/*.rpm
 	BUILDS="$BUILDS $NVR"
 
 	rm -rf tmp
 done
 
-koji -c pignus-koji.conf tag-pkg --force f24-stolen $BUILDS
+[ "$BUILDS" ] && pignus-koji tag-pkg --force f25-stolen $BUILDS
