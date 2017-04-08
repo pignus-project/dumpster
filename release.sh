@@ -21,5 +21,5 @@ then
 	echo "Proceeding to upload..."
 fi
 
-ppub pignus-minimal-$RELEASE$PATCHLEVEL.xz $PM
+#ppub pignus-minimal-$RELEASE$PATCHLEVEL.xz $PM
 ppub pignus-zero-$RELEASE$PATCHLEVEL.xz $PZ
